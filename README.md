@@ -1,7 +1,5 @@
-# Tauri + Vue 3
+# UmlBot
+In many schools, you are forced to work with the Java IDE BlueJay. Often, you need to draw class or sequence diagrams. This project aims to automate the process for you. The goal is to provide a one-click solution to create all possible diagrams.
 
-This template should help get you started developing with Tauri + Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## About me
+I'm Akira Pinemoon, a full-stack developer especially hooked by rust and the web. After being plagued by my CompSci class with the monotonous task of drawing these UML diagrams, I started working on this project, so you don't have to.
