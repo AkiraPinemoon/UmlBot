@@ -6,9 +6,12 @@ import { open } from "@tauri-apps/api/dialog"
 const selectedDir = ref("Choose Directory");
 
 async function processDirectory() {
-  if (selectedDir.value == "") return;
-  if (selectedDir.value == "Choose Directory") return;
-  alert(await invoke("process_directory", { directory: selectedDir.value }));
+  if (selectedDir.value == "" || selectedDir.value == "Choose Directory") {
+    alert("please select a valid directory")
+    return;
+  };
+  await invoke("process_directory", { directory: selectedDir.value });
+  alert("processing");
 }
 
 async function pickDirectory() {
