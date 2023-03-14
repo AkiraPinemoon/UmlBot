@@ -23,7 +23,10 @@ async function pickDirectory() {
 
 <template>
   <div class=" bg-gray-700 w-[50vh] max-w-full h-[40vh] flex flex-col place-items-center justify-center gap-4 rounded">
-    <h1 class=" text-xl">UmlBot 🤖</h1>
+    <div class="flex flex-row place-items-center justify-between h-[5vh] gap-1">
+      <h1 class=" text-xl">UmlBot</h1>
+      <img src="../assets/robot-icon.svg" class=" h-full" />
+    </div>
     <button @click="pickDirectory" class="p-3 truncate overflow-hidden bg-gray-500 w-5/6 h-[10vh] rounded">{{ selectedDir }}</button>
     <button @click="processDirectory" class="p-3 bg-green-500 hover:bg-green-700 w-5/6 h-[10vh] rounded flex flex-row place-items-center justify-between">
       Process

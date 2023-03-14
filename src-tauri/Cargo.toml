@@ -1,13 +1,11 @@
 [package]
-name = "UmlBot"
+name = "uml_bot"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "A one-click solution to automatically generating UML diagrams"
+authors = ["Akira Pinemoon"]
 license = ""
-repository = ""
+repository = "https://github.com/AkiraPinemoon/UmlBot"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
 tauri-build = { version = "1.2", features = [] }
@@ -16,6 +14,7 @@ tauri-build = { version = "1.2", features = [] }
 tauri = { version = "1.2", features = ["dialog-message", "dialog-open", "shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+regex = "1.7.1"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

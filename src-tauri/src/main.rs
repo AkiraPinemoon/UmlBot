@@ -1,9 +1,10 @@
-// Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+mod project_analyzer;
+
 #[tauri::command]
 fn process_directory(directory: &str) {
+    project_analyzer::analyse_project(directory)
 }
 
 fn main() {
