@@ -1,10 +1,19 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use tauri::Manager;
+
 mod project_analyzer;
+mod plantuml;
 
 #[tauri::command]
-fn process_directory(directory: &str) {
-    project_analyzer::analyse_project(directory)
+fn process_directory(directory: &str, custom_java:&str, app: tauri::AppHandle) {
+    app.emit_all("analysis_info", "starting").unwrap();
+    let classes = project_analyzer::analyse_project(directory, &app);
+    match custom_java {
+        "" => plantuml::classes_to_graph(&classes, directory, None, &app),
+        _ => plantuml::classes_to_graph(&classes, directory, Some(custom_java), &app),
+    }
+    app.emit_all("analysis_info", "done").unwrap();
 }
 
 fn main() {

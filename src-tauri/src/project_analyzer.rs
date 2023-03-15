@@ -4,8 +4,9 @@ use std::io::{Write};
 use std::{io::Read, error::Error};
 
 use regex::Regex;
+use tauri::Manager;
 
-pub fn analyse_project(directory: &str) {
+pub fn analyse_project(directory: &str, app: &tauri::AppHandle) -> Vec<Class> {
     let files = find_java_files(directory);
     
     match std::fs::metadata(&format!("{}/umlbot", directory)) {
@@ -13,17 +14,21 @@ pub fn analyse_project(directory: &str) {
         Err(_) => std::fs::create_dir(&format!("{}/umlbot", directory)).unwrap(),
     }
 
+    let mut classes = Vec::new();
+
     for file in files {
         let source = read_file(&file).unwrap();
         let clean_source = remove_comments(source);
         let class = Class::from_source(&clean_source).unwrap();
-        println!("analysed class {}", class.class_signature.class_name);
-        write_file(&format!("{}/umlbot/{}.txt", directory, file.split(|x| {x == '\\' || x == '/'}).last().unwrap().strip_suffix(".java").unwrap()), &class.to_str());
+        app.emit_all("analysis_info", format!("analysed class {}", class.class_signature.class_name)).unwrap();
+        classes.push(class);
     }
+
+    classes
 }
 
 #[derive(Debug)]
-struct ParserError {}
+pub struct ParserError {}
 impl Display for ParserError {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         write!(f, "Parser Error")
@@ -32,12 +37,12 @@ impl Display for ParserError {
 impl Error for ParserError {}
 
 #[derive(Debug, PartialEq)]
-enum ClassType { Class, Interface }
+pub enum ClassType { Class, Interface }
 
 #[derive(Debug)]
-enum AccessType { Default, Public, Private, Protected }
+pub enum AccessType { Default, Public, Private, Protected }
 
-struct ClassSignature {
+pub struct ClassSignature {
     pub access_type: AccessType,
     pub class_type: ClassType,
     pub class_name: String,
@@ -80,12 +85,12 @@ impl ClassSignature {
     }
 }
 
-struct Argument {
+pub struct Argument {
     pub argument_name: String,
     pub argument_type: String,
 }
 
-struct Method {
+pub struct Method {
     pub access_type: AccessType,
     pub is_static: bool,
     pub return_type: Option<String>,
@@ -149,7 +154,7 @@ impl Method {
     }
 }
 
-struct Constructor {
+pub struct Constructor {
     pub access_type: AccessType,
     pub arguments: Vec<Argument>,
 }
@@ -185,7 +190,7 @@ impl Constructor {
     }
 }
 
-struct Member {
+pub struct Member {
     pub access_type: AccessType,
     pub member_name: String,
     pub member_type: String,
@@ -215,11 +220,11 @@ impl Member {
     }
 }
 
-struct Class {
-    class_signature: ClassSignature,
-    constructors: Vec<Constructor>,
-    methods: Vec<Method>,
-    members: Vec<Member>,
+pub struct Class {
+    pub class_signature: ClassSignature,
+    pub constructors: Vec<Constructor>,
+    pub methods: Vec<Method>,
+    pub members: Vec<Member>,
 }
 impl Class {
     fn from_source(class_source: &str) -> Result<Self, Box<dyn Error>> {
@@ -315,8 +320,6 @@ fn read_file(path: &str) -> Result<String, Box<dyn Error>> {
 }
 
 fn find_java_files(dir: &str) -> Vec<String> {
-    println!("searching {}", dir);
-
     let mut files = Vec::new();
 
     for entry in std::fs::read_dir(dir).unwrap() {
@@ -324,7 +327,6 @@ fn find_java_files(dir: &str) -> Vec<String> {
             Ok(file) => {
                 let path = file.path().display().to_string();
                 if path.ends_with(".java") {
-                    println!("found {}", path);
                     files.push(path);
                 }
             },
@@ -333,13 +335,6 @@ fn find_java_files(dir: &str) -> Vec<String> {
     }
     
     files
-}
-
-fn write_file(filename: &str, content: &str) {
-    match std::fs::File::create(filename) {
-        Ok(mut file) => { file.write_all(content.as_bytes()).unwrap(); },
-        Err(_) => println!("couldn't create or open file {}", filename),
-    }
 }
 
 fn remove_comments(source: String) -> String {
